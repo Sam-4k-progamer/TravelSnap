@@ -62,3 +62,9 @@ En [`docs/DIAGRAMAS.md`](docs/DIAGRAMAS.md) incluimos diagramas de arquitectura,
 Todavía tenemos pendiente editar el perfil, abrir una vista de detalle de cada publicación, personalizar el feed según los viajeros seguidos, paginar resultados, buscar destinos y guardar las fotos en un almacenamiento propio. También falta completar pruebas, copias de seguridad y revisar rendimiento y compatibilidad en distintos navegadores.
 
 La meta de este repositorio es que el equipo pueda revisar lo que ya construimos y escoger tareas pequeñas para seguir avanzando.
+
+## Tareas pequeñas para el equipo
+
+- [HU05: editar el nombre del perfil](https://github.com/Sam-4k-progamer/TravelSnap/issues/1)
+- [HU15: buscar por ciudad o país](https://github.com/Sam-4k-progamer/TravelSnap/issues/2)
+- [HU06: previsualizar la foto antes de publicar](https://github.com/Sam-4k-progamer/TravelSnap/issues/3)
