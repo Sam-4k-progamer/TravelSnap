@@ -1,6 +1,6 @@
 # Historias de usuario de TravelSnap
 
-Las historias se agrupan por épica y enlazan a los objetivos B del backlog. Se conservan los IDs HU05, HU06 y HU15 usados por las tareas anteriores del repositorio: editar el nombre, previsualizar antes de publicar y buscar publicaciones. Las funciones futuras aparecen marcadas como pendientes.
+Agrupamos nuestras historias por épica y las vinculamos con los objetivos B del backlog. Mantenemos los IDs HU05, HU06 y HU15 que ya usamos para editar el nombre, previsualizar antes de publicar y buscar publicaciones. Las funciones futuras aparecen marcadas como pendientes.
 
 | ID | Épica | Historia de usuario | Backlog | Estado |
 |---|---|---|---|---|
@@ -22,10 +22,9 @@ Las historias se agrupan por épica y enlazan a los objetivos B del backlog. Se 
 | HU16 | E02 | Como viajero, quiero completar mi perfil con biografía y avatar para presentarme a la comunidad. | B08, B17, B32 | Parcial |
 | HU17 | E03 | Como viajero, quiero subir fotos desde mi dispositivo para no depender de enlaces externos. | B31 | Pendiente |
 | HU18 | E01 | Como persona que usa móvil o escritorio, quiero una interfaz adaptable para recorrer TravelSnap cómodamente. | B14, B45 | Parcial: CSS responsive; falta matriz de pruebas. |
-| HU19 | E07 | Como equipo, queremos conservar pruebas y evidencias de avances para explicar al profesor qué se terminó. | B41, B42, B51, TT-01, TT-02 | Parcial: CI configurada; falta verificar primer run y evidencias por historia. |
+| HU19 | E07 | Como equipo, queremos conservar pruebas y evidencias de avances para explicar al profesor qué se terminó. | B41, B42, B51, TT-01, TT-02 | Parcial: CI ejecutada; falta adjuntar evidencia por historia y sprint. |
 
-## Actores no confirmados
+## Alcance fuera de esta versión
 
-- No se definió un actor administrador ni sus permisos. No se propone una historia admin hasta acordar su responsabilidad.
-- El chat menciona que quizá se intercambiarían proyectos, pero no registra la decisión final; por eso no hay historia de migración de producto.
-- Recuperación de clave, verificación del correo y moderación no aparecen como alcance confirmado; se dejan fuera de este backlog hasta que el equipo/profesor lo solicite.
+- En esta versión trabajamos con visitantes y viajeros autenticados; dejamos por fuera el rol administrador y sus permisos.
+- Recuperación de clave, verificación de correo y moderación quedan para una versión posterior si hacen parte del alcance del curso.

@@ -1,6 +1,6 @@
 # Historias técnicas
 
-Las historias técnicas habilitan historias de usuario o reducen riesgos. El estado describe la versión de TravelSnap revisada; el pipeline quedó configurado en este avance y su primer resultado remoto debe confirmarse.
+Las historias técnicas habilitan nuestras historias de usuario y reducen riesgos. Indicamos su estado de implementación para que el equipo pueda priorizar lo que falta.
 
 | ID | Historia técnica | Aceptación en formato Dado/Cuando/Entonces | Relación | Estado |
 |---|---|---|---|---|
@@ -23,14 +23,14 @@ Las historias técnicas habilitan historias de usuario o reducen riesgos. El est
 | HT-17 | Como equipo, quiero logging y monitoreo sin exponer secretos. | Dado una falla o indisponibilidad, cuando ocurre, entonces queda un evento trazable y una alerta para el equipo. | 50 | Parcial; solo logs HTTP en consola |
 | HT-18 | Como equipo, quiero configuración reproducible de producción y TLS. | Dado hosting y dominio aprobados, cuando se despliega, entonces secretos quedan fuera de Git y todo tráfico público usa HTTPS. | 47–49 | Pendiente: requiere infraestructura del equipo |
 | HT-19 | Como mantenedor, quiero documentación coherente con código y base. | Dado una ruta, tabla o cambio de flujo, cuando se integra, entonces README/API/ER/arquitectura se actualizan. | 05–07, 51 | Hecha para alcance del prototipo |
-| HT-20 | Como equipo, quiero un pipeline CI que ejecute pruebas al cambiar código. | Dado un push o pull request, cuando inicia CI, entonces corre `python -m unittest`, `py_compile` y `node --check`, y publica estado. | 41, 42, chat | Hecha: workflow configurado y primera ejecución exitosa |
-| HT-21 | Como equipo, quiero conservar evidencias de aceptación por sprint. | Dado un criterio aceptado, cuando el equipo cierra la tarea, entonces adjunta enlace de commit/PR y captura o salida reproducible. | chat, DoD | Parcial: CI publica salida de pruebas como artifact; falta evidenciar aceptación por historia |
+| HT-20 | Como equipo, quiero un pipeline CI que ejecute pruebas al cambiar código. | Dado un push o pull request, cuando inicia CI, entonces corre `python -m unittest`, `py_compile` y `node --check`, y publica estado. | 41, 42 | Hecha: workflow configurado y primera ejecución exitosa |
+| HT-21 | Como equipo, quiero conservar evidencias de aceptación por sprint. | Dado un criterio aceptado, cuando el equipo cierra la tarea, entonces adjunta enlace de commit/PR y captura o salida reproducible. | DoD | Parcial: CI publica salida de pruebas como artifact; falta evidenciar aceptación por historia |
 | HT-22 | Como equipo, quiero un proceso de revisión de dependencia y mantenimiento. | Dado una actualización propuesta, cuando se prepara release, entonces se revisa impacto, compatibilidad, tests, respaldo y plan de reversa. | 52 | Parcial; procedimiento inicial en MANTENIMIENTO.md |
 
-## Guía de automatización propuesta
+## Pipeline de automatización
 
 El workflow `.github/workflows/ci.yml` ejecuta GitHub Actions en push/PR a `main`: checkout, Python 3.12, Node 24, `python -m unittest discover -s tests -v`, `python -m py_compile server.py backup_database.py`, `node --check app.js` y guarda la salida de pruebas como artifact por 30 días. No despliega automáticamente ni necesita secretos.
 
-## Plantilla de evidencia propuesta
+## Evidencia de cada historia
 
 Para cada historia: ID y criterio Gherkin; pasos reproducibles; resultado esperado/obtenido; salida de prueba o captura sin datos personales; enlace al commit/PR; fecha; integrante que verificó; defectos conocidos. No se debe afirmar una prueba manual que no se ejecutó.

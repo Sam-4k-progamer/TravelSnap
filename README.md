@@ -4,11 +4,11 @@ Estamos construyendo TravelSnap como una red social sencilla para viajeros. La i
 
 ## Cómo empezó el proyecto
 
-Al inicio organizamos la propuesta en siete épicas y quince historias de usuario. Priorizamos primero el acceso, los perfiles, las publicaciones y el feed. Con esa guía hicimos una primera portada con fotos cambiantes y después fuimos conectando la interfaz con una API y una base de datos local.
+La primera versión la organizamos en siete épicas y quince historias de usuario. Empezamos por el acceso, los perfiles, las publicaciones y el feed. Después hicimos la portada con fotos cambiantes y conectamos la interfaz con una API y una base de datos local. En esta etapa ampliamos las historias y el plan de trabajo.
 
 ## Equipo del proyecto
 
-Según los nombres compartidos en el chat del equipo: **Samuel Arias, Santiago Mejía, Juan Sebastián Molina y Andrés Velásquez**. Los responsables por historia y los usuarios de GitHub individuales quedan por confirmar entre nosotros.
+Somos **Samuel Arias, Santiago Mejía, Juan Sebastián Molina y Andrés Velásquez**. Nos organizamos alrededor de las historias y tareas del backlog para avanzar en conjunto.
 
 ## Avances que llevamos
 
@@ -19,12 +19,12 @@ Según los nombres compartidos en el chat del equipo: **Samuel Arias, Santiago M
 - Se pueden crear publicaciones con una URL HTTPS, dar y quitar likes, seguir viajeros y eliminar publicaciones propias.
 - Quien publicó una historia también puede editar su foto (URL), título, descripción y destino; el servidor valida la sesión y comprueba que sea la publicación propia.
 - Ahora también se pueden leer y publicar comentarios. El servidor valida el texto y lo relaciona con la cuenta y la publicación.
-- La historia HU06 está implementada en esta copia: al escribir una URL HTTPS se comprueba si la imagen carga, se presenta una vista previa, se muestran errores y antes de guardar se exige revisar y confirmar la publicación.
-- La historia HU05 permite editar el nombre visible desde **Mi perfil** (2 a 80 caracteres) con validación en cliente y servidor y sin posibilidad de editar perfiles ajenos.
-- La historia HU15 incorpora búsqueda instantánea de publicaciones por ciudad o país, sin distinguir mayúsculas o tildes, con opción de limpiar y mensaje cuando no hay resultados.
+- En la HU06 implementamos una vista previa para la URL HTTPS: mostramos si la imagen carga, avisamos cuando falla y permitimos revisar la publicación antes de confirmarla.
+- En la HU05 se puede editar el nombre visible desde **Mi perfil**. Validamos entre 2 y 80 caracteres en el navegador y el servidor, usando la sesión de la persona que inició sesión.
+- En la HU15 se pueden buscar publicaciones por ciudad o país, sin distinguir mayúsculas ni tildes. También hay opción para limpiar la búsqueda y un mensaje cuando no hay resultados.
 - Dejamos el esquema de la base en SQL y dibujamos el modelo entidad-relación.
 
-Este es un prototipo académico. Seguimos trabajando sobre varias historias del README original; al final explicamos qué falta.
+TravelSnap es nuestro prototipo académico. En las secciones siguientes dejamos el estado actual y los próximos pasos del proyecto.
 
 ## Tecnologías
 
@@ -99,7 +99,7 @@ python -m unittest discover -s tests -v
 
 GitHub Actions ejecuta estas pruebas y las comprobaciones de sintaxis en cada push o pull request a `main`; la salida queda disponible como evidencia del workflow por 30 días. Ver [ci.yml](.github/workflows/ci.yml).
 
-La búsqueda HU15 se puede verificar con los pasos manuales anteriores; funciona en el navegador con las publicaciones ya recuperadas por la API. Estas pruebas de integración no reemplazan pruebas de navegador, carga, seguridad especializada ni compatibilidad.
+La búsqueda HU15 se puede verificar con los pasos manuales anteriores; funciona en el navegador con las publicaciones ya recuperadas por la API. También nos quedan por hacer pruebas de navegador, carga, seguridad y compatibilidad.
 
 ## Diagramas
 
@@ -109,18 +109,18 @@ En [`docs/DIAGRAMAS.md`](docs/DIAGRAMAS.md) incluimos diagramas de arquitectura,
 
 La definición de visitantes y viajeros, requisitos funcionales/no funcionales, historias de usuario, prioridades y auditoría de los 52 puntos está en [`docs/REQUISITOS_Y_ESTADO.md`](docs/REQUISITOS_Y_ESTADO.md). La comunicación entre navegador, servidor Python y SQLite, el flujo de una solicitud, las restricciones de datos y los límites del prototipo están en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 
-El paquete de gestión ágil basado en el chat del equipo está en [`docs/gestion-agil/`](docs/gestion-agil/): épicas y backlog de 52 objetivos, [historias de usuario](docs/gestion-agil/06_HISTORIAS_DE_USUARIO.md), criterios de aceptación Gherkin, requerimientos/DoD, historias técnicas y cuatro actas propuestas de Sprint Planning. El chat no registra las reuniones, fechas ni estimaciones; las actas son borradores para validar, no actas históricas.
+En [`docs/gestion-agil/`](docs/gestion-agil/) organizamos nuestro trabajo: épicas y backlog de 52 objetivos, [historias de usuario](docs/gestion-agil/06_HISTORIAS_DE_USUARIO.md), criterios Gherkin, requerimientos y DoD, historias técnicas y cuatro planes de Sprint Planning con sus objetivos y backlogs.
 
-Los objetivos también están organizados en [52 issues del repositorio](https://github.com/Sam-4k-progamer/TravelSnap/issues). B01–B52 corresponden a los issues #4–#55; los issues #1–#3 se mantienen como historias anteriores. No se duplicaron tareas.
+Los objetivos también están organizados en [52 issues del repositorio](https://github.com/Sam-4k-progamer/TravelSnap/issues): B01–B52 corresponden a los issues #4–#55. Las historias HU05, HU15 y HU06 están en los issues #1–#3.
 
 ## Qué sigue
 
-Todavía tenemos pendiente abrir una vista de detalle de cada publicación, personalizar el feed según los viajeros seguidos, paginar resultados y guardar las fotos en un almacenamiento propio. La edición del nombre, la búsqueda por ciudad/país y la vista previa de las imágenes ya están implementadas en esta versión local. También falta completar pruebas, copias de seguridad y revisar rendimiento y compatibilidad en distintos navegadores.
+Todavía nos falta abrir una vista de detalle por publicación, personalizar y paginar el feed, y guardar las fotos en un almacenamiento propio. La edición del nombre, la búsqueda por ciudad o país y la vista previa ya están en esta versión. Tenemos pruebas automatizadas y copias manuales; nos queda ampliar las pruebas, automatizar los respaldos y revisar rendimiento y compatibilidad en distintos navegadores.
 
 La meta de este repositorio es que el equipo pueda revisar lo que ya construimos y escoger tareas pequeñas para seguir avanzando.
 
-## Tareas pequeñas para el equipo
+## Historias implementadas
 
-- [HU05: editar el nombre del perfil](https://github.com/Sam-4k-progamer/TravelSnap/issues/1) — implementada en esta versión local; pendiente de integrar y cerrar en GitHub.
-- [HU15: buscar por ciudad o país](https://github.com/Sam-4k-progamer/TravelSnap/issues/2) — implementada en esta versión local; pendiente de integrar y cerrar en GitHub.
-- [HU06: previsualizar la foto antes de publicar](https://github.com/Sam-4k-progamer/TravelSnap/issues/3) — implementada en esta versión local; pendiente de integrar y cerrar en GitHub.
+- [HU05: editar el nombre del perfil](https://github.com/Sam-4k-progamer/TravelSnap/issues/1) — implementada y cerrada.
+- [HU15: buscar por ciudad o país](https://github.com/Sam-4k-progamer/TravelSnap/issues/2) — implementada y cerrada.
+- [HU06: previsualizar la foto antes de publicar](https://github.com/Sam-4k-progamer/TravelSnap/issues/3) — implementada y cerrada.

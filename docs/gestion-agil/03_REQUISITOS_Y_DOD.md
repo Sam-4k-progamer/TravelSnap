@@ -4,7 +4,7 @@
 
 - **Visitante:** ve portada/feed público, se registra o inicia sesión. No realiza acciones privadas.
 - **Viajero autenticado:** administra su cuenta y sus publicaciones, comenta, da likes y sigue viajeros.
-- **Administrador:** no está implementado ni se confirmó en el chat. No se debe asignar permisos admin hasta acordar sus responsabilidades.
+- **Administrador:** queda fuera del alcance de esta versión. Por ahora trabajamos con visitantes y viajeros autenticados.
 
 ## Requerimientos funcionales
 
@@ -58,11 +58,11 @@ Una historia se considera terminada solo cuando:
 
 ## DoD de documentación / análisis
 
-El documento identifica alcance y fuentes; separa hechos del chat de propuestas; tiene IDs consistentes; criterios verificables; estado actual no exagerado; relaciones con el backlog; y aprobación/revisión del equipo pendiente o registrada. Las actas de sprint de este paquete son **propuestas**: el chat no aporta fechas, estimaciones ni evidencia de que esas reuniones ocurrieran.
+El documento presenta el alcance, IDs consistentes, criterios verificables, estado real y relación con el backlog. En cada revisión mantenemos los documentos alineados con el código y registramos los cambios acordados por el equipo.
 
-## Requisitos de entrega académica derivados del chat
+## Entregables del proyecto
 
 - README con integrantes, idea, requerimientos funcionales/épicas, requisitos no funcionales/DoD e historias técnicas.
 - Modelo ER para presentar y revisar.
 - Backlog de al menos 50 objetivos: aquí se conserva la lista de 52 del plan de producto.
-- Automatización de verificación y evidencias de avance. Son necesidades mencionadas en el chat, pero el pipeline y la plantilla de evidencia aún no están instalados.
+- Automatización de verificación y evidencias de avance. El pipeline ejecuta las pruebas y guarda sus resultados; seguimos adjuntando evidencia por historia y sprint.

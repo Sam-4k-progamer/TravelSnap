@@ -1,14 +1,10 @@
 # Backlog de producto TravelSnap
 
-## Contexto tomado del chat
+## Cómo organizamos el backlog
 
-El grupo acordó continuar con TravelSnap por el tiempo disponible. En el chat se pide un README con integrantes, idea, épicas/historias, requisitos no funcionales/DoD e historias técnicas; también se pide el modelo ER. Más adelante se menciona un mínimo de 50 tareas y, para el cierre, automatización y evidencias. La posible permuta del proyecto se menciona como posibilidad, pero el chat no registra una decisión final de cambiarlo.
+Elegimos continuar con TravelSnap y ordenamos el trabajo en siete épicas y **52 objetivos**. En el repositorio están como issues #4–#55: B01 corresponde al issue #4 y B52 al #55. Los issues #1–#3 corresponden a las historias HU05, HU15 y HU06. En este documento agrupamos las tareas por área, prioridad y estado para que podamos escoger trabajo y revisar avances sin duplicarlo.
 
-Integrantes nombrados en el chat: **Samuel Arias, Santiago Mejía, Juan Sebastián Molina y Andrés Velásquez**. No se asignan responsables individuales porque no hay reparto confirmado. El chat identifica el repositorio `av751711-star/TravelSnap`; el repositorio de entrega actualmente acordado en este trabajo es [Sam-4k-progamer/TravelSnap](https://github.com/Sam-4k-progamer/TravelSnap).
-
-El repositorio ya contiene los **52 issues del backlog** como issues #4–#55; B01 corresponde a #4 y B52 a #55. Los issues #1–#3 son las tres historias sencillas anteriores (HU05, HU15 y HU06). Se conservaron, sin crear duplicados. El estado de cierre en GitHub lo controla el equipo; la columna de esta tabla refleja la auditoría de código/documentos y puede diferir mientras el equipo valida cada issue.
-
-La exportación omite audios, imágenes y el documento/README inicial compartido. Por eso, los siguientes criterios detallan el alcance deducible del código y de la lista de 52 tareas, pero las decisiones que dependían de esos adjuntos quedan por validar con el equipo/profesor.
+El equipo del proyecto está formado por **Samuel Arias, Santiago Mejía, Juan Sebastián Molina y Andrés Velásquez**. Repartimos responsables al organizar cada sprint.
 
 ## Épicas
 
@@ -81,9 +77,9 @@ Prioridad: **P0** esencial para el prototipo seguro; **P1** funcionalidad princi
 | 51 | E07 | Documentar arquitectura, esquema, API, instalación y uso. | Documentación | P1 | Hecho para prototipo académico |
 | 52 | E07 | Acordar mantenimiento y evolución del producto. | Proceso | P2 | Parcial: guía inicial, faltan responsables/calendario |
 
-## Tareas técnicas transversales solicitadas en el chat
+## Tareas técnicas transversales
 
-Se añaden al plan técnico porque el grupo reportó que el profesor pidió automatización y evidencias. No sustituyen ni cambian los 52 IDs del backlog.
+Además del backlog de producto, incluimos dos tareas técnicas para automatizar las verificaciones y conservar evidencias reproducibles. Se identifican aparte para mantener los 52 IDs del backlog sin cambios.
 
 | ID técnico | Historia técnica | Criterio de aceptación | Estado |
 |---|---|---|---|

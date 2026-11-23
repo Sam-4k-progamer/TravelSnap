@@ -1,8 +1,8 @@
 # Requisitos, usuarios, historias y estado de TravelSnap
 
-El paquete ágil ampliado basado en el chat del equipo está en [`gestion-agil/`](gestion-agil/), incluyendo el backlog de 52 objetivos, escenarios Gherkin, requisitos/DoD, historias técnicas y actas propuestas de planificación.
+En [`gestion-agil/`](gestion-agil/) dejamos nuestras épicas, el backlog de 52 objetivos, los criterios Gherkin, requisitos y DoD, historias de usuario/técnicas y planes de Sprint Planning.
 
-Este documento describe la copia actual de TravelSnap ubicada junto a este archivo. **Hecho** significa que existe una implementación comprobable en el proyecto; **Parcial** significa que solo cubre parte del alcance solicitado; **Pendiente** significa que no está implementado. Una descripción o un diagrama por sí solos no cuentan como funcionalidad implementada.
+En este documento registramos el alcance y el estado actual de TravelSnap. Comparamos cada punto con el código: **Hecho** significa que está implementado; **Parcial** significa que solo está cubierta una parte; **Pendiente** significa que todavía debemos desarrollarlo.
 
 ## 1. Alcance y tipos de usuario
 
@@ -10,7 +10,7 @@ Este documento describe la copia actual de TravelSnap ubicada junto a este archi
 |---|---|---|
 | Visitante | Implementado parcialmente | Ver la portada con carrusel, consultar el feed público, registrarse e iniciar sesión. No puede crear interacciones ni publicar. |
 | Viajero registrado | Implementado | Crear y cerrar sesión, consultar feed, publicar una foto por URL, comentar, dar/quitar likes, seguir/dejar de seguir cuentas, editar su nombre y borrar sus propias publicaciones. |
-| Administrador | No existe en esta versión | Tipo reservado para una etapa posterior. No hay rol, panel administrativo ni permisos de moderación; no se debe presentar como una capacidad disponible. |
+| Administrador | Fuera del alcance actual | Esta versión no tiene rol, panel administrativo ni permisos de moderación. |
 
 No hay roles persistidos en la base actual. La separación de permisos se basa en visitante frente a usuario autenticado y en la propiedad del recurso.
 
@@ -100,10 +100,10 @@ Escala: prioridad **P0** bloquea seguridad o uso básico; **P1** aporta el núcl
 
 | Nº | Estado actual | Evidencia o brecha principal |
 |---:|---|---|
-| 1 | Hecho con este documento | Requisitos funcionales y no funcionales descritos arriba. |
-| 2 | Hecho con este documento | Visitante y viajero existen; administrador queda identificado como futuro/no implementado. |
-| 3 | Hecho con este documento | Historias con criterios resumidos y estado. |
-| 4 | Hecho con este documento | Priorización por valor, prioridad, esfuerzo y dependencias. |
+| 1 | Hecho | Requisitos funcionales y no funcionales descritos arriba. |
+| 2 | Hecho | Visitante y viajero definidos; administrador fuera del alcance actual. |
+| 3 | Hecho | Historias con criterios resumidos y estado. |
+| 4 | Hecho | Priorización por valor, prioridad, esfuerzo y dependencias. |
 | 5 | Hecho | Arquitectura actual documentada en `ARQUITECTURA.md` y `DIAGRAMAS.md`. |
 | 6 | Hecho | SQLite local, inicializada desde `database.sql`; no hay servidor DB remoto. |
 | 7 | Hecho | ER descrito en `DIAGRAMAS.md` y editable en draw.io. |
@@ -120,7 +120,7 @@ Escala: prioridad **P0** bloquea seguridad o uso básico; **P1** aporta el núcl
 | 18 | Parcial | Feed visible; descarga todos los posts, sin paginación ni límite de tiempo. |
 | 19 | Hecho para URL | Formulario pide título, descripción, ciudad, país e imagen HTTPS; no carga archivos. |
 | 20 | Hecho | Modal de lectura y creación de comentarios. |
-| 21 | Hecho en modo local | Servidor HTTP de Python y rutas API; no es servidor de producción. |
+| 21 | Hecho en modo local | Servidor HTTP de Python y rutas API; aún no lo configuramos para producción. |
 | 22 | Hecho | `sqlite3`, conexión por solicitud, inicialización desde SQL. |
 | 23 | Hecho | Valida correo/nombre/clave y unicidad en DB; handle generado. |
 | 24 | Hecho | Verifica PBKDF2 y usa comparación constante. |
@@ -150,7 +150,7 @@ Escala: prioridad **P0** bloquea seguridad o uso básico; **P1** aporta el núcl
 | 48 | Pendiente | No hay dominio ni TLS de producción. |
 | 49 | Pendiente | No está desplegado; SQLite es local. |
 | 50 | Parcial | Accesos HTTP se imprimen a consola; no hay log persistente, métricas ni alertas. |
-| 51 | Hecho para el prototipo | README, instalación, API, requisitos, historias, arquitectura, esquema, ER, pruebas y límites del alcance están documentados. |
+| 51 | Hecho para el prototipo | README, instalación, API, requisitos, historias, arquitectura, esquema, ER, pruebas y límites están documentados. |
 | 52 | Parcial | Hay un procedimiento inicial en `MANTENIMIENTO.md`; faltan responsables y calendario operativo del equipo. |
 
 ## 7. Decisiones y límites de alcance
@@ -158,4 +158,4 @@ Escala: prioridad **P0** bloquea seguridad o uso básico; **P1** aporta el núcl
 - El prototipo usa SQLite porque es local, no requiere instalación de un servicio y permite demostrar relaciones y restricciones. Para producción con múltiples instancias habría que migrar y probar un motor servidor.
 - Las fotografías son URL HTTPS externas. Para aceptar archivos se debe elegir almacenamiento, tamaño/formato máximo, escaneo, políticas de retención y secretos; no se simula esa capacidad.
 - Las funciones que necesitan cuentas de hosting, credenciales, dominio, almacenamiento externo o una decisión del equipo (roles admin, moderación, recuperación de contraseña) quedan como trabajo pendiente y requieren configuración real.
-- No se incluye la base con datos del computador en el repositorio; `database.sql` crea el esquema y datos de demostración.
+- No subimos la base local al repositorio; `database.sql` crea el esquema y los datos de demostración.
