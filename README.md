@@ -109,7 +109,7 @@ En [`docs/DIAGRAMAS.md`](docs/DIAGRAMAS.md) incluimos diagramas de arquitectura,
 
 La definición de visitantes y viajeros, requisitos funcionales/no funcionales, historias de usuario, prioridades y auditoría de los 52 puntos está en [`docs/REQUISITOS_Y_ESTADO.md`](docs/REQUISITOS_Y_ESTADO.md). La comunicación entre navegador, servidor Python y SQLite, el flujo de una solicitud, las restricciones de datos y los límites del prototipo están en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 
-En [`docs/gestion-agil/`](docs/gestion-agil/) organizamos nuestro trabajo: épicas y backlog de 52 objetivos, [historias de usuario](docs/gestion-agil/06_HISTORIAS_DE_USUARIO.md), criterios Gherkin, requerimientos y DoD, historias técnicas y cuatro planes de Sprint Planning con sus objetivos y backlogs.
+En [`docs/gestion-agil/`](docs/gestion-agil/) organizamos nuestro trabajo: [bitácora de acuerdos y avances](docs/gestion-agil/00_BITACORA_DEL_PROYECTO.md), épicas y backlog de 52 objetivos, [historias de usuario](docs/gestion-agil/06_HISTORIAS_DE_USUARIO.md), criterios Gherkin, requerimientos y DoD, historias técnicas y cuatro planes de Sprint Planning con sus objetivos y backlogs.
 
 Los objetivos también están organizados en [52 issues del repositorio](https://github.com/Sam-4k-progamer/TravelSnap/issues): B01–B52 corresponden a los issues #4–#55. Las historias HU05, HU15 y HU06 están en los issues #1–#3.
 
