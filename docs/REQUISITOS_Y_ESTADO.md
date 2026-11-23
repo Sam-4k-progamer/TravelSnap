@@ -1,5 +1,7 @@
 # Requisitos, usuarios, historias y estado de TravelSnap
 
+El paquete ágil ampliado basado en el chat del equipo está en [`gestion-agil/`](gestion-agil/), incluyendo el backlog de 52 objetivos, escenarios Gherkin, requisitos/DoD, historias técnicas y actas propuestas de planificación.
+
 Este documento describe la copia actual de TravelSnap ubicada junto a este archivo. **Hecho** significa que existe una implementación comprobable en el proyecto; **Parcial** significa que solo cubre parte del alcance solicitado; **Pendiente** significa que no está implementado. Una descripción o un diagrama por sí solos no cuentan como funcionalidad implementada.
 
 ## 1. Alcance y tipos de usuario
@@ -123,7 +125,7 @@ Escala: prioridad **P0** bloquea seguridad o uso básico; **P1** aporta el núcl
 | 23 | Hecho | Valida correo/nombre/clave y unicidad en DB; handle generado. |
 | 24 | Hecho | Verifica PBKDF2 y usa comparación constante. |
 | 25 | Parcial | Token aleatorio hash guardado, expiración 14 días, cookie HttpOnly/SameSite; falta `Secure` en HTTPS y limpieza más sistemática. |
-| 26 | Parcial | API consulta/crea/edita/elimina; aún no pagina ni ofrece endpoint de detalle. |
+| 26 | Hecho para CRUD | API permite consultar feed, crear, editar y eliminar con controles de propietario; paginación y detalle se controlan en los puntos 33 y 36. |
 | 27 | Hecho básico | GET y POST de comentarios con sesión para crear. |
 | 28 | Hecho | POST/DELETE, clave única evita likes repetidos y contador se ajusta. |
 | 29 | Hecho básico | POST/DELETE y control de duplicados/autoseguimiento. |
@@ -148,7 +150,7 @@ Escala: prioridad **P0** bloquea seguridad o uso básico; **P1** aporta el núcl
 | 48 | Pendiente | No hay dominio ni TLS de producción. |
 | 49 | Pendiente | No está desplegado; SQLite es local. |
 | 50 | Parcial | Accesos HTTP se imprimen a consola; no hay log persistente, métricas ni alertas. |
-| 51 | Parcial | README, API resumida, esquema y diagramas existen; faltaba consolidar requisitos, límites y guía de mantenimiento. |
+| 51 | Hecho para el prototipo | README, instalación, API, requisitos, historias, arquitectura, esquema, ER, pruebas y límites del alcance están documentados. |
 | 52 | Parcial | Hay un procedimiento inicial en `MANTENIMIENTO.md`; faltan responsables y calendario operativo del equipo. |
 
 ## 7. Decisiones y límites de alcance

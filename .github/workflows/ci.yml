@@ -1,0 +1,45 @@
+name: TravelSnap CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Pruebas y sintaxis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@v7
+
+      - name: Configurar Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Ejecutar suite de pruebas
+        run: set -o pipefail; python -m unittest discover -s tests -v 2>&1 | tee test-results.txt
+
+      - name: Verificar sintaxis
+        run: |
+          python -m py_compile server.py backup_database.py
+          node --check app.js
+
+      - name: Guardar salida de pruebas como evidencia
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: evidencia-pruebas-${{ github.run_number }}
+          path: test-results.txt
+          if-no-files-found: ignore
+          retention-days: 30

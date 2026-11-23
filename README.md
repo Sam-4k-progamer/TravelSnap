@@ -6,6 +6,10 @@ Estamos construyendo TravelSnap como una red social sencilla para viajeros. La i
 
 Al inicio organizamos la propuesta en siete épicas y quince historias de usuario. Priorizamos primero el acceso, los perfiles, las publicaciones y el feed. Con esa guía hicimos una primera portada con fotos cambiantes y después fuimos conectando la interfaz con una API y una base de datos local.
 
+## Equipo del proyecto
+
+Según los nombres compartidos en el chat del equipo: **Samuel Arias, Santiago Mejía, Juan Sebastián Molina y Andrés Velásquez**. Los responsables por historia y los usuarios de GitHub individuales quedan por confirmar entre nosotros.
+
 ## Avances que llevamos
 
 - La portada presenta destinos con un carrusel automático de fotografías.
@@ -93,6 +97,8 @@ Para comprobar los flujos HTTP y SQLite (registro y correo duplicado, logout, co
 python -m unittest discover -s tests -v
 ```
 
+GitHub Actions ejecuta estas pruebas y las comprobaciones de sintaxis en cada push o pull request a `main`; la salida queda disponible como evidencia del workflow por 30 días. Ver [ci.yml](.github/workflows/ci.yml).
+
 La búsqueda HU15 se puede verificar con los pasos manuales anteriores; funciona en el navegador con las publicaciones ya recuperadas por la API. Estas pruebas de integración no reemplazan pruebas de navegador, carga, seguridad especializada ni compatibilidad.
 
 ## Diagramas
@@ -102,6 +108,8 @@ En [`docs/DIAGRAMAS.md`](docs/DIAGRAMAS.md) incluimos diagramas de arquitectura,
 ## Requisitos y arquitectura
 
 La definición de visitantes y viajeros, requisitos funcionales/no funcionales, historias de usuario, prioridades y auditoría de los 52 puntos está en [`docs/REQUISITOS_Y_ESTADO.md`](docs/REQUISITOS_Y_ESTADO.md). La comunicación entre navegador, servidor Python y SQLite, el flujo de una solicitud, las restricciones de datos y los límites del prototipo están en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
+
+El paquete de gestión ágil basado en el chat del equipo está en [`docs/gestion-agil/`](docs/gestion-agil/): épicas y backlog de 52 objetivos, [historias de usuario](docs/gestion-agil/06_HISTORIAS_DE_USUARIO.md), criterios de aceptación Gherkin, requerimientos/DoD, historias técnicas y cuatro actas propuestas de Sprint Planning. El chat no registra las reuniones, fechas ni estimaciones; las actas son borradores para validar, no actas históricas.
 
 ## Qué sigue
 
