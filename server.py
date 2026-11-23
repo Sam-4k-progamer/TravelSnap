@@ -10,6 +10,7 @@ import re
 import secrets
 import sqlite3
 import time
+from contextlib import contextmanager
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -26,11 +27,19 @@ SESSION_TTL = 60 * 60 * 24 * 14
 PASSWORD_ROUNDS = 310_000
 MAX_BODY = 64 * 1024
 
-def connect_db() -> sqlite3.Connection:
+@contextmanager
+def connect_db():
     connection = sqlite3.connect(DB_PATH, timeout=10)
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
-    return connection
+    try:
+        yield connection
+        connection.commit()
+    except Exception:
+        connection.rollback()
+        raise
+    finally:
+        connection.close()
 
 
 def init_db() -> None:
@@ -52,9 +61,13 @@ def hash_password(password: str, salt: bytes | None = None) -> tuple[bytes, byte
 
 
 def valid_image_url(value: object) -> bool:
-    if not isinstance(value, str) or len(value) > 2048:
+    if not isinstance(value, str) or not value or len(value) > 2048 or any(char.isspace() for char in value):
         return False
-    return value.startswith("https://")
+    try:
+        parsed = urlparse(value)
+        return parsed.scheme == "https" and bool(parsed.hostname) and not parsed.username and not parsed.password
+    except ValueError:
+        return False
 
 
 class TravelSnapHandler(SimpleHTTPRequestHandler):
@@ -213,6 +226,7 @@ class TravelSnapHandler(SimpleHTTPRequestHandler):
                     if not hmac.compare_digest(candidate, user["password_hash"]):
                         return self.send_json(HTTPStatus.UNAUTHORIZED, {"error": "Correo o contraseña incorrectos."})
                 session_cookie = self.create_session(db, user["id"])
+                db.commit()
                 return self.send_json(HTTPStatus.OK, {"user": user_payload(user)}, [("Set-Cookie", session_cookie)])
 
         if path == "/api/logout":
@@ -220,6 +234,7 @@ class TravelSnapHandler(SimpleHTTPRequestHandler):
             if token:
                 with connect_db() as db:
                     db.execute("DELETE FROM sessions WHERE token_hash=?", (hashlib.sha256(token.encode()).hexdigest(),))
+                    db.commit()
             return self.send_json(HTTPStatus.OK, {"ok": True}, [("Set-Cookie", f"{SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0")])
 
         if path == "/api/posts":
@@ -237,6 +252,7 @@ class TravelSnapHandler(SimpleHTTPRequestHandler):
                 post_id = secrets.token_hex(12)
                 db.execute("INSERT INTO posts(id,user_id,image_url,title,description,city,country,display_date) VALUES(?,?,?,?,?,?,?,'ahora')",
                            (post_id, user["id"], image, title, description, city, country))
+                db.commit()
                 return self.send_json(HTTPStatus.CREATED, {"id": post_id})
 
         if path.startswith("/api/posts/") and path.endswith("/comments"):
@@ -255,6 +271,7 @@ class TravelSnapHandler(SimpleHTTPRequestHandler):
                     return self.send_json(HTTPStatus.NOT_FOUND, {"error": "La publicación no existe."})
                 comment_id = secrets.token_hex(12)
                 db.execute("INSERT INTO comments(id,user_id,post_id,body) VALUES(?,?,?,?)", (comment_id, user["id"], post_id, body))
+                db.commit()
                 return self.send_json(HTTPStatus.CREATED, {"id": comment_id})
 
         if path.startswith("/api/posts/") and path.endswith("/likes"):
@@ -269,6 +286,7 @@ class TravelSnapHandler(SimpleHTTPRequestHandler):
                 if db.execute("SELECT changes()").fetchone()[0]:
                     db.execute("UPDATE posts SET likes_count=likes_count+1 WHERE id=?", (post_id,))
                 row = db.execute("SELECT likes_count FROM posts WHERE id=?", (post_id,)).fetchone()
+                db.commit()
                 return self.send_json(HTTPStatus.OK, {"liked": True, "likes": row["likes_count"]})
 
         if path.startswith("/api/follows/"):
@@ -283,9 +301,61 @@ class TravelSnapHandler(SimpleHTTPRequestHandler):
                 if target["id"] == user["id"]:
                     return self.send_json(HTTPStatus.BAD_REQUEST, {"error": "No puedes seguir tu propia cuenta."})
                 db.execute("INSERT OR IGNORE INTO follows(follower_id,followed_id) VALUES(?,?)", (user["id"], target["id"]))
+                db.commit()
                 return self.send_json(HTTPStatus.OK, {"following": True})
 
         return self.send_json(HTTPStatus.NOT_FOUND, {"error": "No se encontró el recurso."})
+
+    def do_PATCH(self):
+        path = urlparse(self.path).path
+        if path.startswith("/api/posts/"):
+            post_id = path.removeprefix("/api/posts/").strip("/")
+            with connect_db() as db:
+                user = self.require_user(db)
+                if user is None:
+                    return
+                try:
+                    payload = self.read_json()
+                except ValueError as error:
+                    return self.send_json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
+                image = payload.get("image", "")
+                title = payload.get("title")
+                description = payload.get("description")
+                city = payload.get("city")
+                country = payload.get("country")
+                values = (title, description, city, country)
+                if not valid_image_url(image) or any(not isinstance(value, str) for value in values):
+                    return self.send_json(HTTPStatus.BAD_REQUEST, {"error": "Revisa la foto y los campos de la publicación."})
+                title, description, city, country = (value.strip() for value in values)
+                if not (1 <= len(title) <= 90 and 1 <= len(description) <= 300 and 1 <= len(city) <= 80 and 1 <= len(country) <= 80):
+                    return self.send_json(HTTPStatus.BAD_REQUEST, {"error": "Revisa la foto y los campos de la publicación."})
+                cursor = db.execute("""UPDATE posts SET image_url=?,title=?,description=?,city=?,country=?
+                    WHERE id=? AND user_id=?""", (image, title, description, city, country, post_id, user["id"]))
+                if cursor.rowcount == 0:
+                    return self.send_json(HTTPStatus.NOT_FOUND, {"error": "No se encontró una publicación propia para editar."})
+                db.commit()
+                return self.send_json(HTTPStatus.OK, {"ok": True})
+        if path != "/api/me":
+            return self.send_json(HTTPStatus.NOT_FOUND, {"error": "No se encontró el recurso."})
+        with connect_db() as db:
+            user = self.require_user(db)
+            if user is None:
+                return
+            try:
+                payload = self.read_json()
+            except ValueError as error:
+                return self.send_json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
+            name = payload.get("name")
+            if not isinstance(name, str):
+                return self.send_json(HTTPStatus.BAD_REQUEST, {"error": "El nombre debe ser un texto válido."})
+            name = name.strip()
+            if not 2 <= len(name) <= 80:
+                return self.send_json(HTTPStatus.BAD_REQUEST, {"error": "El nombre debe tener entre 2 y 80 caracteres."})
+            # El ID proviene exclusivamente de la sesión autenticada.
+            db.execute("UPDATE users SET name=? WHERE id=?", (name, user["id"]))
+            db.commit()
+            updated = db.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
+            return self.send_json(HTTPStatus.OK, {"user": user_payload(updated)})
 
     def do_DELETE(self):
         path = urlparse(self.path).path
@@ -301,18 +371,21 @@ class TravelSnapHandler(SimpleHTTPRequestHandler):
                 row = db.execute("SELECT likes_count FROM posts WHERE id=?", (post_id,)).fetchone()
                 if row is None:
                     return self.send_json(HTTPStatus.NOT_FOUND, {"error": "La publicación no existe."})
+                db.commit()
                 return self.send_json(HTTPStatus.OK, {"liked": False, "likes": row["likes_count"]})
             if path.startswith("/api/posts/"):
                 post_id = path.removeprefix("/api/posts/").strip("/")
                 cursor = db.execute("DELETE FROM posts WHERE id=? AND user_id=?", (post_id, user["id"]))
                 if cursor.rowcount == 0:
                     return self.send_json(HTTPStatus.NOT_FOUND, {"error": "No se encontró una publicación propia para eliminar."})
+                db.commit()
                 return self.send_json(HTTPStatus.OK, {"ok": True})
             if path.startswith("/api/follows/"):
                 handle = path.removeprefix("/api/follows/").strip("/")
                 target = db.execute("SELECT id FROM users WHERE handle=? COLLATE NOCASE", (handle,)).fetchone()
                 if target:
                     db.execute("DELETE FROM follows WHERE follower_id=? AND followed_id=?", (user["id"], target["id"]))
+                db.commit()
                 return self.send_json(HTTPStatus.OK, {"following": False})
         return self.send_json(HTTPStatus.NOT_FOUND, {"error": "No se encontró el recurso."})
 

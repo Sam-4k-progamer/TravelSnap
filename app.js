@@ -16,6 +16,7 @@ let user = null;
 let posts = [];
 let suggestions = [];
 let activeTab = 'feed';
+let searchTerm = '';
 let slide = 0;
 let toastTimer;
 
@@ -61,17 +62,60 @@ function renderLanding() {
 }
 
 function postCard(post) {
-  return `<article class="post-card"><div class="post-top">${avatar(post.avatar, post.name)}<div><div class="post-author">${esc(post.name)}</div><div class="post-meta">@${esc(post.handle)} · ${esc(post.date)}</div></div>${post.owner === 'me' ? `<button class="post-delete" data-delete="${esc(post.id)}" aria-label="Eliminar publicación" title="Eliminar publicación">Eliminar</button>` : ''}</div>
+  return `<article class="post-card"><div class="post-top">${avatar(post.avatar, post.name)}<div><div class="post-author">${esc(post.name)}</div><div class="post-meta">@${esc(post.handle)} · ${esc(post.date)}</div></div>${post.owner === 'me' ? `<button class="post-delete" data-edit-post="${esc(post.id)}" aria-label="Editar publicación">Editar</button><button class="post-delete" data-delete="${esc(post.id)}" aria-label="Eliminar publicación" title="Eliminar publicación">Eliminar</button>` : ''}</div>
   <div class="post-image-wrap"><img class="post-image" src="${esc(post.image)}" alt="${esc(post.title)}" loading="lazy"><span class="post-location">⌖ &nbsp;${esc(post.city)}, ${esc(post.country)}</span></div>
   <div class="post-content"><h2 class="post-title">${esc(post.title)}</h2><p class="post-description">${esc(post.description)}</p><div class="post-actions"><button class="action ${post.liked ? 'liked' : ''}" data-like="${esc(post.id)}">${post.liked ? '♥' : '♡'} &nbsp;${post.likes} me gusta</button><button class="action" data-comments="${esc(post.id)}">◯ &nbsp; Comentar</button><button class="action right" data-share="${esc(post.id)}">↗ &nbsp; Compartir</button></div></div></article>`;
 }
 
+function normalizePlace(value) {
+  // Normaliza mayúsculas y tildes: "Bogotá" también aparece buscando "bogota".
+  return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('es');
+}
+
+function visibleFeedPosts() {
+  if (activeTab === 'profile') return posts.filter(post => post.owner === 'me');
+  const query = normalizePlace(searchTerm.trim());
+  return query ? posts.filter(post => normalizePlace(post.city).includes(query) || normalizePlace(post.country).includes(query)) : posts;
+}
+
+function postsHtml(items) {
+  if (items.length) return items.map(postCard).join('');
+  if (activeTab === 'feed' && searchTerm.trim()) {
+    return `<div class="empty-state"><div class="serif">Sin resultados</div><p>No encontramos publicaciones para «${esc(searchTerm.trim())}». Prueba otra ciudad o país.</p><button class="btn btn-outline" type="button" data-clear-search>Limpiar búsqueda</button></div>`;
+  }
+  return `<div class="empty-state"><div class="serif">Todavía no hay publicaciones</div><p>Comparte tu primera aventura para empezar tu perfil.</p><button class="btn" data-compose>＋ Compartir una foto</button></div>`;
+}
+
+function updatePostList() {
+  const list = document.querySelector('#postList');
+  if (!list) return;
+  const matches = visibleFeedPosts();
+  list.innerHTML = postsHtml(matches);
+  const status = document.querySelector('#searchStatus');
+  if (status) status.textContent = searchTerm.trim() ? `${matches.length} ${matches.length === 1 ? 'publicación encontrada' : 'publicaciones encontradas'}` : '';
+  const clear = document.querySelector('#clearSearch');
+  if (clear) clear.disabled = !searchTerm;
+}
+
 function renderApp() {
-  const visiblePosts = activeTab === 'profile' ? posts.filter(post => post.owner === 'me') : posts;
-  app.innerHTML = `<header class="app-nav"><div class="app-nav-inner"><a class="brand" href="#"><span class="brand-mark">✳</span>travel<span style="font-weight:400">snap</span></a><nav class="app-nav-links"><button data-tab="feed" class="${activeTab === 'feed' ? 'active' : ''}">Inicio</button><button data-tab="profile" class="${activeTab === 'profile' ? 'active' : ''}">Mi perfil</button></nav><div class="app-user">${avatar(null, user.name)}<div><div class="user-name">${esc(user.name)}</div><div class="quiet">Viajero/a</div></div><button class="btn btn-outline" style="padding:9px 13px;font-size:11px;margin-left:8px" data-logout>Salir</button></div></div></header>
-  <div class="app-shell"><main class="app-main"><section><div class="feed-title"><div><span class="eyebrow">${activeTab === 'profile' ? 'Tu espacio viajero' : 'Tu dosis de inspiración'}</span><h1>${activeTab === 'profile' ? 'Mi perfil' : 'Explora el mundo'}</h1><p>${activeTab === 'profile' ? 'Tus historias de viaje, todas en un lugar.' : 'Historias frescas de viajeros como tú.'}</p></div><button class="btn" data-compose>＋ Publicar</button></div>${visiblePosts.length ? visiblePosts.map(postCard).join('') : `<div class="empty-state"><div class="serif">Todavía no hay publicaciones</div><p>Comparte tu primera aventura para empezar tu perfil.</p><button class="btn" data-compose>＋ Compartir una foto</button></div>`}</section>
+  const visiblePosts = visibleFeedPosts();
+  const isProfile = activeTab === 'profile';
+  const searchBox = isProfile ? '' : `<div class="feed-search"><label for="feedSearch">Buscar publicaciones por ciudad o país</label><div class="search-controls"><input id="feedSearch" type="search" autocomplete="off" placeholder="Ej. Bogotá, Colombia o Italia" maxlength="80" value="${esc(searchTerm)}"><button type="button" id="clearSearch" class="btn btn-outline" data-clear-search ${searchTerm ? '' : 'disabled'}>Limpiar</button></div><p id="searchStatus" role="status" aria-live="polite">${searchTerm.trim() ? `${visiblePosts.length} ${visiblePosts.length === 1 ? 'publicación encontrada' : 'publicaciones encontradas'}` : ''}</p></div>`;
+  app.innerHTML = `<header class="app-nav"><div class="app-nav-inner"><a class="brand" href="#"><span class="brand-mark">✳</span>travel<span style="font-weight:400">snap</span></a><nav class="app-nav-links"><button data-tab="feed" class="${activeTab === 'feed' ? 'active' : ''}">Inicio</button><button data-tab="profile" class="${isProfile ? 'active' : ''}">Mi perfil</button></nav><div class="app-user">${avatar(null, user.name)}<div><div class="user-name">${esc(user.name)}</div><div class="quiet">Viajero/a</div></div><button class="btn btn-outline" style="padding:9px 13px;font-size:11px;margin-left:8px" data-logout>Salir</button></div></div></header>
+  <div class="app-shell"><main class="app-main"><section><div class="feed-title"><div><span class="eyebrow">${isProfile ? 'Tu espacio viajero' : 'Tu dosis de inspiración'}</span><h1>${isProfile ? 'Mi perfil' : 'Explora el mundo'}</h1><p>${isProfile ? 'Tus historias de viaje, todas en un lugar.' : 'Historias frescas de viajeros como tú.'}</p></div><button class="btn" data-compose>＋ Publicar</button></div>${isProfile ? `<div class="profile-edit"><div><span class="side-label">Nombre visible</span><strong>${esc(user.name)}</strong><span class="quiet">@${esc(user.handle)}</span></div><button class="btn btn-outline" type="button" data-edit-profile>Editar nombre</button></div>` : searchBox}<div id="postList">${postsHtml(visiblePosts)}</div></section>
   <aside class="sidebar"><div class="sidebar-card"><div class="side-label">Tu perfil viajero</div><h3>¡Qué bueno verte, ${esc(user.name.split(' ')[0])}!</h3><div class="sidebar-profile">${avatar(null, user.name)}<div><div class="user-name">${esc(user.name)}</div><div class="quiet">Una historia en cada destino.</div></div></div><button class="btn btn-outline" style="width:100%;font-size:11px;padding:9px" data-tab="profile">Ver mi perfil</button></div>
   <div class="sidebar-card"><div class="side-label">Comunidad</div><h3>Viajeros para seguir</h3>${suggestions.map(person => `<div class="sidebar-profile">${avatar(person.avatar, person.name)}<div><div class="user-name">${esc(person.name)}</div><div class="quiet">@${esc(person.handle)}</div></div><button class="btn btn-outline follow" data-follow="${esc(person.handle)}">${person.followed ? 'Siguiendo' : 'Seguir'}</button></div>`).join('')}</div><div class="sidebar-card side-note"><div class="side-label">Una nota de viaje</div><p>“No todos los que vagan están perdidos.”<br><strong>— J. R. R. Tolkien</strong></p></div></aside></main></div>`;
+}
+
+function openEditProfile() {
+  document.body.insertAdjacentHTML('beforeend', `<div class="modal-backdrop" id="modalBackdrop"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle"><button class="modal-close" data-close aria-label="Cerrar">×</button><span class="eyebrow">Mi perfil</span><h2 id="editProfileTitle">Editar nombre</h2><p>El nombre que guardes aparecerá en tu perfil y en tus publicaciones.</p><form id="editProfileForm" novalidate><label class="field"><span>Nombre visible</span><input type="text" name="name" autocomplete="name" required minlength="2" maxlength="80" value="${esc(user.name)}"></label><div class="form-error" id="profileError" role="alert"></div><button class="btn" type="submit">Guardar cambios</button></form></section></div>`);
+  document.querySelector('#editProfileForm [name="name"]').focus();
+}
+
+function openEditPost(postId) {
+  const post = posts.find(item => item.id === postId && item.owner === 'me');
+  if (!post) return;
+  document.body.insertAdjacentHTML('beforeend', `<div class="modal-backdrop" id="modalBackdrop"><section class="modal compose-modal" role="dialog" aria-modal="true" aria-labelledby="editPostTitle"><button class="modal-close" data-close aria-label="Cerrar">×</button><span class="eyebrow">Tu historia</span><h2 id="editPostTitle">Editar publicación</h2><form id="editPostForm" data-post="${esc(post.id)}"><label class="field"><span>URL HTTPS de la fotografía</span><input name="image" type="url" required maxlength="2048" value="${esc(post.image)}"></label><label class="field"><span>Título</span><input name="title" required maxlength="90" value="${esc(post.title)}"></label><label class="field"><span>Descripción</span><textarea name="description" required maxlength="300">${esc(post.description)}</textarea></label><div class="post-place-fields"><label class="field"><span>Ciudad</span><input name="city" required maxlength="80" value="${esc(post.city)}"></label><label class="field"><span>País</span><input name="country" required maxlength="80" value="${esc(post.country)}"></label></div><div class="form-error" id="editPostError" role="alert"></div><button class="btn" type="submit">Guardar cambios</button></form></section></div>`);
 }
 
 async function loadAppData() {
@@ -89,7 +133,112 @@ function openAuth(mode) {
 }
 
 function openCompose() {
-  document.body.insertAdjacentHTML('beforeend', `<div class="modal-backdrop" id="modalBackdrop"><section class="modal" role="dialog" aria-modal="true"><button class="modal-close" data-close aria-label="Cerrar">×</button><span class="eyebrow">Comparte el camino</span><h2>Tu próxima historia</h2><p>Cuéntale a la comunidad sobre ese lugar especial.</p><form id="postForm"><label class="field"><span>URL de una fotografía</span><input name="image" type="url" placeholder="https://…" value="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=85" required></label><label class="field"><span>Título</span><input name="title" placeholder="¿Qué hizo especial este lugar?" required maxlength="90"></label><label class="field"><span>Tu historia</span><textarea name="description" placeholder="Comparte un recuerdo o consejo…" required maxlength="300"></textarea></label><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><label class="field"><span>Ciudad</span><input name="city" placeholder="Ciudad" required maxlength="80"></label><label class="field"><span>País</span><input name="country" placeholder="País" required maxlength="80"></label></div><div class="form-error" id="postError"></div><button class="btn" type="submit">Compartir publicación ↗</button></form></section></div>`);
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="modal-backdrop" id="modalBackdrop">
+      <section class="modal compose-modal" role="dialog" aria-modal="true" aria-labelledby="composeTitle">
+        <button class="modal-close" data-close aria-label="Cerrar">×</button>
+        <span class="eyebrow">Comparte el camino</span>
+        <h2 id="composeTitle">Tu próxima historia</h2>
+        <p>Cuéntale a la comunidad sobre ese lugar especial.</p>
+        <form id="postForm">
+          <label class="field"><span>URL de una fotografía</span>
+            <input name="image" type="url" placeholder="https://…" value="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=85" required>
+          </label>
+          <div id="postPreview" class="post-preview" hidden>
+            <img id="postPreviewImage" alt="Vista previa de la fotografía que se va a publicar">
+          </div>
+          <p id="postPreviewStatus" class="post-preview-status" role="status" aria-live="polite"></p>
+          <label class="field"><span>Título</span>
+            <input name="title" placeholder="¿Qué hizo especial este lugar?" required maxlength="90">
+          </label>
+          <label class="field"><span>Tu historia</span>
+            <textarea name="description" placeholder="Comparte un recuerdo o consejo…" required maxlength="300"></textarea>
+          </label>
+          <div class="post-place-fields">
+            <label class="field"><span>Ciudad</span><input name="city" placeholder="Ciudad" required maxlength="80"></label>
+            <label class="field"><span>País</span><input name="country" placeholder="País" required maxlength="80"></label>
+          </div>
+          <div class="form-error" id="postError" role="alert"></div>
+          <button class="btn" type="submit" id="reviewPostButton" disabled>Revisar publicación ↗</button>
+        </form>
+        <div id="postReview" class="post-review" hidden></div>
+      </section>
+    </div>`);
+  setupPostPreview();
+}
+
+function postPayload(form) {
+  const data = new FormData(form);
+  return Object.fromEntries(['image', 'title', 'description', 'city', 'country']
+    .map(key => [key, String(data.get(key) || '').trim()]));
+}
+
+function setupPostPreview() {
+  const form = document.querySelector('#postForm');
+  const input = form.elements.image;
+  const preview = document.querySelector('#postPreview');
+  const previewImage = document.querySelector('#postPreviewImage');
+  const status = document.querySelector('#postPreviewStatus');
+  const reviewButton = document.querySelector('#reviewPostButton');
+  let requestId = 0;
+  let debounceTimer;
+  let imageTimer;
+
+  function resetPreview(message, isError = false) {
+    form.dataset.verifiedUrl = '';
+    reviewButton.disabled = true;
+    preview.hidden = true;
+    previewImage.removeAttribute('src');
+    status.textContent = message;
+    status.classList.toggle('preview-error', isError);
+  }
+
+  function verifyImage() {
+    const url = input.value.trim();
+    const currentRequest = ++requestId;
+    resetPreview('Comprobando la fotografía…');
+
+    if (!url) {
+      resetPreview('Pega una URL HTTPS para ver la fotografía.');
+      return;
+    }
+    let parsed;
+    try { parsed = new URL(url); } catch { /* invalid URL */ }
+    if (!parsed || parsed.protocol !== 'https:' || !parsed.hostname || url.length > 2048 || parsed.username || parsed.password) {
+      resetPreview('Introduce una URL HTTPS válida para la fotografía.', true);
+      return;
+    }
+
+    const testImage = new Image();
+    function fail() {
+      if (currentRequest !== requestId) return;
+      clearTimeout(imageTimer);
+      resetPreview('No se pudo cargar la imagen. Revisa el enlace o usa otra fotografía.', true);
+    }
+    testImage.onload = () => {
+      if (currentRequest !== requestId) return;
+      clearTimeout(imageTimer);
+      if (!testImage.naturalWidth || !testImage.naturalHeight) return fail();
+      previewImage.src = url;
+      preview.hidden = false;
+      form.dataset.verifiedUrl = url;
+      reviewButton.disabled = false;
+      status.textContent = 'Fotografía cargada correctamente. Ya puedes revisar tu publicación.';
+      status.classList.remove('preview-error');
+    };
+    testImage.onerror = fail;
+    imageTimer = setTimeout(fail, 12000);
+    testImage.src = url;
+  }
+
+  input.addEventListener('input', () => {
+    ++requestId; // Invalida respuestas tardías de una URL anterior.
+    clearTimeout(debounceTimer);
+    clearTimeout(imageTimer);
+    resetPreview('Comprobando la fotografía…');
+    debounceTimer = setTimeout(verifyImage, 350);
+  });
+  verifyImage();
 }
 
 async function loadComments(postId) {
@@ -143,6 +292,45 @@ document.addEventListener('click', async event => {
     return;
   }
   if (event.target.closest('[data-compose]')) return openCompose();
+  if (event.target.closest('[data-edit-profile]')) return openEditProfile();
+  const editPostButton = event.target.closest('[data-edit-post]');
+  if (editPostButton) return openEditPost(editPostButton.dataset.editPost);
+  if (event.target.closest('[data-clear-search]')) {
+    searchTerm = '';
+    const search = document.querySelector('#feedSearch');
+    if (search) { search.value = ''; search.focus(); }
+    updatePostList();
+    return;
+  }
+  const backToPost = event.target.closest('[data-post-back]');
+  if (backToPost) {
+    document.querySelector('#postReview').hidden = true;
+    document.querySelector('#postForm').hidden = false;
+    return;
+  }
+  const confirmPost = event.target.closest('[data-post-confirm]');
+  if (confirmPost) {
+    const form = document.querySelector('#postForm');
+    const payload = postPayload(form);
+    const reviewError = document.querySelector('#postReviewError');
+    if (form.dataset.verifiedUrl !== payload.image) {
+      reviewError.textContent = 'La imagen cambió. Vuelve al formulario y comprueba la vista previa.';
+      return;
+    }
+    confirmPost.disabled = true;
+    try {
+      await api('/api/posts', { method: 'POST', body: payload });
+      document.querySelector('#modalBackdrop')?.remove();
+      activeTab = 'feed';
+      await loadAppData();
+      notify('Tu historia ya forma parte del feed.');
+    } catch (error) {
+      reviewError.textContent = error.message;
+      confirmPost.disabled = false;
+    }
+    return;
+  }
+
   const deleteButton = event.target.closest('[data-delete]');
   if (deleteButton) {
     const post = posts.find(item => item.id === deleteButton.dataset.delete);
@@ -176,7 +364,62 @@ document.addEventListener('click', async event => {
   }
 });
 
+document.addEventListener('input', event => {
+  if (event.target.id === 'feedSearch') {
+    searchTerm = event.target.value;
+    updatePostList();
+  }
+});
+
 document.addEventListener('submit', async event => {
+  if (event.target.id === 'editPostForm') {
+    event.preventDefault();
+    const form = event.target;
+    const data = new FormData(form);
+    const payload = Object.fromEntries(['image', 'title', 'description', 'city', 'country'].map(key => [key, String(data.get(key) || '').trim()]));
+    const errorTarget = document.querySelector('#editPostError');
+    let imageUrl;
+    try { imageUrl = new URL(payload.image); } catch { /* invalid URL */ }
+    if (!imageUrl || imageUrl.protocol !== 'https:' || !imageUrl.hostname) {
+      errorTarget.textContent = 'La fotografía debe usar una URL HTTPS válida.';
+      return;
+    }
+    const button = form.querySelector('button[type=submit]');
+    button.disabled = true;
+    try {
+      await api(`/api/posts/${encodeURIComponent(form.dataset.post)}`, { method: 'PATCH', body: payload });
+      document.querySelector('#modalBackdrop')?.remove();
+      await loadAppData();
+      notify('Publicación actualizada.');
+    } catch (error) {
+      errorTarget.textContent = error.message;
+      button.disabled = false;
+    }
+    return;
+  }
+  if (event.target.id === 'editProfileForm') {
+    event.preventDefault();
+    const form = event.target;
+    const name = String(new FormData(form).get('name') || '').trim();
+    const errorTarget = form.querySelector('#profileError');
+    if (name.length < 2 || name.length > 80) {
+      errorTarget.textContent = 'El nombre debe tener entre 2 y 80 caracteres.';
+      return;
+    }
+    const button = form.querySelector('button[type=submit]');
+    button.disabled = true;
+    try {
+      const result = await api('/api/me', { method: 'PATCH', body: { name } });
+      user = result.user;
+      document.querySelector('#modalBackdrop')?.remove();
+      await loadAppData();
+      notify('Tu nombre se actualizó correctamente.');
+    } catch (error) {
+      errorTarget.textContent = error.message;
+      button.disabled = false;
+    }
+    return;
+  }
   if (event.target.id === 'authForm') {
     event.preventDefault();
     const form = event.target;
@@ -199,18 +442,32 @@ document.addEventListener('submit', async event => {
 
   if (event.target.id === 'postForm') {
     event.preventDefault();
-    const data = new FormData(event.target);
-    const payload = Object.fromEntries(['image', 'title', 'description', 'city', 'country'].map(key => [key, String(data.get(key)).trim()]));
-    try {
-      await api('/api/posts', { method: 'POST', body: payload });
-      document.querySelector('#modalBackdrop').remove();
-      activeTab = 'feed';
-      await loadAppData();
-      notify('Tu historia ya forma parte del feed.');
-    } catch (error) {
-      const target = document.querySelector('#postError');
-      if (target) target.textContent = error.message;
+    const form = event.target;
+    const payload = postPayload(form);
+    const errorTarget = document.querySelector('#postError');
+    errorTarget.textContent = '';
+    if (form.dataset.verifiedUrl !== payload.image) {
+      errorTarget.textContent = 'Primero debes cargar correctamente la vista previa de la imagen.';
+      return;
     }
+    if (!payload.title || !payload.description || !payload.city || !payload.country) {
+      errorTarget.textContent = 'Completa el título, la descripción, la ciudad y el país.';
+      return;
+    }
+
+    const review = document.querySelector('#postReview');
+    review.innerHTML = `<h3>Confirma tu publicación</h3>
+      <img class="post-review-image" src="${esc(payload.image)}" alt="Fotografía de la publicación">
+      <h4>${esc(payload.title)}</h4>
+      <p>${esc(payload.description)}</p>
+      <p class="post-review-location">⌖ ${esc(payload.city)}, ${esc(payload.country)}</p>
+      <div class="post-review-actions">
+        <button type="button" class="btn btn-outline" data-post-back>Volver a editar</button>
+        <button type="button" class="btn" data-post-confirm>Confirmar y publicar ↗</button>
+      </div>
+      <div class="form-error" id="postReviewError" role="alert"></div>`;
+    form.hidden = true;
+    review.hidden = false;
   }
 
   if (event.target.id === 'commentForm') {

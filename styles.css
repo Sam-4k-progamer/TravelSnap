@@ -4,3 +4,42 @@
 
 .post-delete{margin-left:auto;border:1px solid #e7ded8;background:#fff;color:#9a5d4e;border-radius:999px;padding:6px 11px;font-size:10px;font-weight:600}.post-delete:hover{background:#fbf1ed;border-color:#d9b7aa}
 .comments-modal{width:min(520px,100%)}.comment-post-title{color:#77837d;font-size:12px;line-height:1.5}.comment-list{max-height:300px;overflow:auto;border-top:1px solid #e8e9e2;border-bottom:1px solid #e8e9e2;margin:15px 0;padding:4px 0}.comment-item{display:flex;gap:10px;padding:12px 2px;border-bottom:1px solid #eff0eb}.comment-item:last-child{border-bottom:0}.comment-item .avatar{flex:0 0 34px;width:34px;height:34px}.comment-author{font-size:12px;font-weight:700}.comment-author span,.comment-item small{color:#77837d;font-size:10px;font-weight:400}.comment-item p{margin:5px 0;color:#53665b;font-size:12px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.comment-item small{display:block}.comment-list .empty{padding:24px 10px}
+
+
+/* HU06: comprobación de imágenes y confirmación antes de publicar */
+.compose-modal{width:min(490px,100%);max-height:calc(100vh - 40px);overflow-y:auto}
+.post-preview{margin:-3px 0 7px;border-radius:5px;overflow:hidden;background:#e2e9df}
+.post-preview img{display:block;width:100%;height:180px;object-fit:cover}
+.post-preview-status{margin:3px 0 15px;font-size:12px;line-height:1.5;color:#537460}
+.post-preview-status.preview-error{color:#b44d3a}
+.post-place-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.compose-modal .btn:disabled{opacity:.48;cursor:not-allowed;transform:none}
+.post-preview[hidden],#postForm[hidden],.post-review[hidden]{display:none}
+.post-review h3{font:500 22px 'Playfair Display',serif;margin:12px 0 15px}
+.post-review-image{display:block;width:100%;max-height:230px;object-fit:cover;border-radius:5px}
+.post-review h4{font:500 20px 'Playfair Display',serif;margin:17px 0 6px}
+.post-review p{font-size:13px;line-height:1.6;color:#60746a;white-space:pre-wrap;overflow-wrap:anywhere}
+.post-review-location{font-weight:600}
+.post-review-actions{display:flex;gap:10px;margin-top:14px}
+.post-review-actions .btn{flex:1;padding:11px 12px;font-size:12px}
+@media(max-width:430px){.post-review-actions{flex-direction:column}.post-preview img{height:155px}}
+
+
+/* HU05: edición del nombre del perfil */
+.profile-edit{background:#fff;border:1px solid var(--line);border-radius:7px;padding:19px 20px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.profile-edit strong{font-size:18px;display:block;margin:7px 0 4px}
+.profile-edit .quiet{display:block}
+.profile-edit .btn{white-space:nowrap;font-size:12px}
+#editProfileForm .btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* HU15: búsqueda instantánea por ciudad o país */
+.feed-search{background:#fff;border:1px solid var(--line);border-radius:7px;padding:15px 18px;margin:0 0 22px}
+.feed-search label{display:block;font-size:12px;font-weight:700;margin-bottom:9px}
+.search-controls{display:flex;gap:10px}
+.search-controls input{flex:1;min-width:0;padding:11px 13px;border:1px solid #dfe3da;border-radius:5px;background:#fff;color:var(--ink);font:inherit;font-size:13px}
+.search-controls input:focus{outline:2px solid #93b49d;outline-offset:1px}
+.search-controls .btn{font-size:12px;border-radius:6px;padding:9px 15px}
+.search-controls .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+#searchStatus{margin:7px 0 0;font-size:11px;color:var(--muted);min-height:0}
+#searchStatus:empty{display:none}
+@media(max-width:680px){.profile-edit{align-items:flex-start;flex-wrap:wrap}.feed-search{padding:13px}.search-controls .btn{padding:10px}}
