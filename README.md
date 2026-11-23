@@ -111,6 +111,8 @@ La definición de visitantes y viajeros, requisitos funcionales/no funcionales, 
 
 El paquete de gestión ágil basado en el chat del equipo está en [`docs/gestion-agil/`](docs/gestion-agil/): épicas y backlog de 52 objetivos, [historias de usuario](docs/gestion-agil/06_HISTORIAS_DE_USUARIO.md), criterios de aceptación Gherkin, requerimientos/DoD, historias técnicas y cuatro actas propuestas de Sprint Planning. El chat no registra las reuniones, fechas ni estimaciones; las actas son borradores para validar, no actas históricas.
 
+Los objetivos también están organizados en [52 issues del repositorio](https://github.com/Sam-4k-progamer/TravelSnap/issues). B01–B52 corresponden a los issues #4–#55; los issues #1–#3 se mantienen como historias anteriores. No se duplicaron tareas.
+
 ## Qué sigue
 
 Todavía tenemos pendiente abrir una vista de detalle de cada publicación, personalizar el feed según los viajeros seguidos, paginar resultados y guardar las fotos en un almacenamiento propio. La edición del nombre, la búsqueda por ciudad/país y la vista previa de las imágenes ya están implementadas en esta versión local. También falta completar pruebas, copias de seguridad y revisar rendimiento y compatibilidad en distintos navegadores.

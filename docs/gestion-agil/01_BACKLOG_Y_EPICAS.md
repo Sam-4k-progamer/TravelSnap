@@ -6,6 +6,8 @@ El grupo acordó continuar con TravelSnap por el tiempo disponible. En el chat s
 
 Integrantes nombrados en el chat: **Samuel Arias, Santiago Mejía, Juan Sebastián Molina y Andrés Velásquez**. No se asignan responsables individuales porque no hay reparto confirmado. El chat identifica el repositorio `av751711-star/TravelSnap`; el repositorio de entrega actualmente acordado en este trabajo es [Sam-4k-progamer/TravelSnap](https://github.com/Sam-4k-progamer/TravelSnap).
 
+El repositorio ya contiene los **52 issues del backlog** como issues #4–#55; B01 corresponde a #4 y B52 a #55. Los issues #1–#3 son las tres historias sencillas anteriores (HU05, HU15 y HU06). Se conservaron, sin crear duplicados. El estado de cierre en GitHub lo controla el equipo; la columna de esta tabla refleja la auditoría de código/documentos y puede diferir mientras el equipo valida cada issue.
+
 La exportación omite audios, imágenes y el documento/README inicial compartido. Por eso, los siguientes criterios detallan el alcance deducible del código y de la lista de 52 tareas, pero las decisiones que dependían de esos adjuntos quedan por validar con el equipo/profesor.
 
 ## Épicas
@@ -85,7 +87,7 @@ Se añaden al plan técnico porque el grupo reportó que el profesor pidió auto
 
 | ID técnico | Historia técnica | Criterio de aceptación | Estado |
 |---|---|---|---|
-| TT-01 | Como equipo, queremos ejecutar automáticamente verificaciones al integrar cambios para detectar regresiones antes de exponer. | Dado un cambio en una rama, cuando se ejecuta el flujo automatizado, entonces se ejecutan pruebas y verificaciones de sintaxis y queda visible el resultado. | CI configurada; falta confirmar su primera ejecución en GitHub Actions |
+| TT-01 | Como equipo, queremos ejecutar automáticamente verificaciones al integrar cambios para detectar regresiones antes de exponer. | Dado un cambio en una rama, cuando se ejecuta el flujo automatizado, entonces se ejecutan pruebas y verificaciones de sintaxis y queda visible el resultado. | Hecha: workflow ejecutado con éxito en GitHub Actions |
 | TT-02 | Como equipo, queremos conservar evidencias reproducibles para mostrar avances al profesor. | Dado un sprint terminado, cuando se prepara su evidencia, entonces se enlazan commit/PR, captura o salida de pruebas y criterios aceptados, sin datos personales ni credenciales. | Parcial: CI guarda salida de pruebas; falta adjuntar evidencia por historia/sprint y asignar responsable |
 
 ## Definition of Ready resumida
