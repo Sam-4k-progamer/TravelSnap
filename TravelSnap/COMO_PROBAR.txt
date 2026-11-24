@@ -1,0 +1,18 @@
+TRAVELSNAP - VERSION PARA PROBAR HU05, HU15, HU06
+
+1. Extrae este ZIP en una carpeta NUEVA (no la mezcles con la anterior).
+2. Abre esa carpeta en Visual Studio Code. server.py debe verse directamente en el explorador.
+3. Si tienes otro servidor corriendo, detenlo con Ctrl+C en su terminal.
+4. Abre una terminal en la nueva carpeta y escribe: python server.py
+   (Alternativamente, haz doble clic en INICIAR_TRAVELSNAP.bat desde el Explorador de archivos.)
+5. Entra a http://localhost:8000 y recarga con Ctrl+F5.
+
+COMPROBACION:
+HU05: Mi perfil -> Editar nombre.
+HU15: Inicio -> Buscar publicaciones por ciudad o pais.
+HU06: Publicar -> URL HTTPS -> Vista previa -> Revisar publicacion -> Confirmar y publicar.
+
+Este ZIP NO incluye la carpeta data. Conserva los archivos de datos previos si los necesitas;
+para conservarlos, copia la carpeta data original a esta carpeta, con el servidor apagado.
+
+Si no aparecen las tres funciones, probablemente sigues ejecutando un servidor anterior.
